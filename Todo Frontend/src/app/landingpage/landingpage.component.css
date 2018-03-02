@@ -1,0 +1,30 @@
+body, html {
+    height: 100%;
+}
+
+.btn-white {
+    border-color:white;
+}
+
+.btn {
+    margin-right: 100px
+}
+h1 {
+    margin-bottom: 100px;
+    font-family : "Times New Roman", Times, serif;
+    color: white
+}
+.view {
+    background-image :linear-gradient(rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.0)), url(image/avi-richards-183715-unsplash.jpg);
+    background-color: black;
+    
+
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; 
+
+}
