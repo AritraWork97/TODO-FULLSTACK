@@ -1,4 +1,8 @@
-var TodoService = require('../services/todos.service')
+var passport = require('passport');
+
+
+var TodoService = require('../services/todos.service');
+var User = require('../models/todo.user');
 
 _this = this
 
@@ -70,3 +74,89 @@ exports.removeTodo = async function(req, res, next){
     }
 
 }
+
+exports.register = async function(req, res) {
+    var user = new User();
+    user.email = req.body.email;
+    user.name = req.body.name;
+    user.setPassword(req.body.password);
+    try {
+            var token = user.generateJwt();
+            res.status(200).json({
+                "token" : token
+            })
+    } catch(e) {
+        res.status(400).send(e.message);
+
+    }
+}
+
+exports.login = function(req, res) {
+
+    passport.authenticate('local', function(err, user, info){
+      var token;
+  
+      // If Passport throws/catches an error
+      if (err) {
+        res.status(404).json(err);
+        return;
+      }
+  
+      // If a user is found
+      if(user){
+        token = user.generateJwt();
+        res.status(200);
+        res.json({
+          "token" : token
+        });
+      } else {
+        // If user is not found
+        res.status(401).json(info);
+      }
+    })(req, res);
+  
+  };
+
+  exports.login = function(req, res) {
+
+    passport.authenticate('local', {successRedirect : '/profile', failureRedirect : '/login'}, function(err, user, info){
+      var token;
+  
+      // If Passport throws/catches an error
+      if (err) {
+        res.status(404).json(err);
+        return;
+      }
+  
+      // If a user is found
+      if(user){
+        token = user.generateJwt();
+        res.status(200);
+        res.json({
+          "token" : token
+        });
+      } else {
+        // If user is not found
+        res.status(401).json(info);
+      }
+    })(req, res);
+  
+  };
+
+  exports.profile = function(req, res) {
+
+    // If no user ID exists in the JWT return a 401
+    if (!req.payload._id) {
+      res.status(401).json({
+        "message" : "UnauthorizedError: private profile"
+      });
+    } else {
+      // Otherwise continue
+      User
+        .findById(req.payload._id)
+        .exec(function(err, user) {
+          res.status(200).json(user);
+        });
+    }
+  
+  };
